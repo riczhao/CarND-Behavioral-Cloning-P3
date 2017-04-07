@@ -23,11 +23,18 @@ def get_data(path):
         images.append(plt.imread(f_center)[crop_x:])
         steering = float(line[3])
         steerings.append(steering)
-    return np.array(images),np.array(steerings)
+    return np.array(images)/255. - 0.5,np.array(steerings)
+
+def augment(x, y, batch_size):
+    datagen = keras.preprocessing.image.ImageDataGenerator(
+        horizontal_flip=True)
+    datagen.fit(x)
+    datagen.flow(x, y, batch_size, shuffle=True)
 
 def get_model():
     model = keras.models.Sequential()
     model.add(layers.InputLayer(input_shape=(160-crop_x,320,3)))
+    model.add(layers.GaussianNoise(0.1))
     model.add(layers.Conv2D(6,(3,3), activation='relu'))
     model.add(layers.MaxPool2D())
     model.add(layers.Conv2D(16,(3,3), activation='relu'))
