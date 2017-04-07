@@ -20,10 +20,11 @@ def get_data(path):
     steerings = []
     for line in lines:
         f_center = path + line[0]
-        images.append(plt.imread(f_center)[crop_x:])
+        img = plt.imread(f_center)[crop_x:]/255. - 0.5
+        images.append(img)
         steering = float(line[3])
         steerings.append(steering)
-    return np.array(images)/255. - 0.5,np.array(steerings)
+    return np.array(images),np.array(steerings)
 
 def augment(x, y, batch_size):
     datagen = keras.preprocessing.image.ImageDataGenerator(
